@@ -9,6 +9,12 @@ sock.bind(('127.0.0.1', 9001))
 rt = ReliableTransport(sock)
 rx = Receiver(rt)
 
+print("Receiver starting...")
+client_addr = rt.accept() # Wait for handshake
+if not client_addr:
+    print("Handshake failed.")
+    exit()
+
 print("Receiver ready...")
 
 while True:

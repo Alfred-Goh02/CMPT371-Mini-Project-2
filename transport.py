@@ -42,3 +42,44 @@ class ReliableTransport:
         self.sock.settimeout(None)
         print("Failed to connect.")
         return False
+    
+    # TESTTTT
+    def accept(self):
+        """Server-side 3-way handshake"""
+        print("Waiting for connection...")
+        
+        # 1. Wait for SYN
+        while True:
+            try:
+                data, addr = self.sock.recvfrom(4096)
+                pkt = Packet.deserialize(data)
+                if pkt and (pkt.flags & Packet.SYN):
+                    break # Got SYN
+            except Exception:
+                continue
+
+        print("Received SYN, sending SYN-ACK...")
+        
+        # 2. Send SYN-ACK
+        self.ack = pkt.seq + 1
+        self.seq = random.randint(1, 5000)
+        syn_ack = Packet(self.seq, self.ack, Packet.SYN | Packet.ACK, 64)
+        self.channel.send(syn_ack.serialize(), addr)
+
+        # 3. Wait for ACK
+        self.sock.settimeout(1.0)
+        for i in range(5):
+            try:
+                data, _ = self.sock.recvfrom(4096)
+                pkt = Packet.deserialize(data)
+                if pkt and (pkt.flags & Packet.ACK) and (pkt.ack == self.seq + 1):
+                    self.state = "ESTABLISHED"
+                    print("Connection Established!")
+                    self.sock.settimeout(None)
+                    return addr # Return client address
+            except socket.timeout:
+                print("Timeout waiting for final ACK, resending SYN-ACK...")
+                self.channel.send(syn_ack.serialize(), addr)
+        
+        self.sock.settimeout(None)
+        return None
