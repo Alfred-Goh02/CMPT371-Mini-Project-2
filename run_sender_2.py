@@ -10,7 +10,7 @@ sock.bind(('127.0.0.1', 0))
 rt = ReliableTransport(sock, loss_rate=0.2) # CHANGE THIS BACKKKKKKKKKK
 sender = GBNSender(rt)
 
-addr = ('127.0.0.1', 9001)
+addr = ('127.0.0.1', 9002)
 
 print("Connecting...")
 if rt.connect(addr):
