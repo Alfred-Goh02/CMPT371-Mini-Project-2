@@ -72,11 +72,21 @@ class ReliableTransport:
             try:
                 data, _ = self.sock.recvfrom(4096)
                 pkt = Packet.deserialize(data)
+                
+                # Check if its the specific Handshake ACK we are waiting for
                 if pkt and (pkt.flags & Packet.ACK) and (pkt.ack == self.seq + 1):
                     self.state = "ESTABLISHED"
                     print("Connection Established!")
                     self.sock.settimeout(None)
-                    return addr # Return client address
+                    return addr
+                
+                # Check if its a data packet
+                if pkt and len(pkt.data) > 0:
+                    print("Received Data. Connection Established!")
+                    self.state = "ESTABLISHED"
+                    self.sock.settimeout(None)
+                    return addr
+
             except socket.timeout:
                 print("Timeout waiting for final ACK, resending SYN-ACK...")
                 self.channel.send(syn_ack.serialize(), addr)
