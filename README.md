@@ -74,11 +74,16 @@ Notes:
 - Congestion control reduces sending rate under loss or delay.
 - Fairness experiments (bonus) show coexistence behavior.
 
-**Next steps & tips**
+**Testing**
 
 - Read the report PDF for the exact spec used in this implementation.
-- To exercise loss/corruption behavior, look for the simulation code in `channel.py` (random drop/corrupt flags) and tweak probabilities.
-- If you want, I can add a short `RUNNING.md` with step-by-step experiment commands or help run traces and summarize results.
+
+- Quick notes on where to change common test settings:
+
+  - **Sender loss rate:** edit `src/run_sender.py` where `ReliableTransport` is constructed (e.g. `ReliableTransport(sock, loss_rate=0.2)`).
+  - **Receiver loss rate:** edit `src/run_receiver.py` and change the `loss_rate` passed to `ReliableTransport` there.
+  - **Corruption rate:** edit `src/channel.py` (the `UnreliableChannel` constructor has a `corrupt_rate` parameter) or modify `transport.py` to pass an explicit `corrupt_rate` when creating `UnreliableChannel`.
+  - **Advertised (receiver) window:** edit `src/receiver.py` and change `advertised_window` (default `64`) to a smaller value (e.g., `2`) to test receiver-limited flow control.
 
 ---
 
