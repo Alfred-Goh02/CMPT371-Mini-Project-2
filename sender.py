@@ -41,28 +41,23 @@ class GBNSender:
                 else:
                     self._start_timer()
 
-
-
     def _start_timer(self):
-        """Start a retransmission timer if not already running"""
         if self.timer is not None:
-            self.timer.cancel()  # stop old timer
+            self.timer.cancel()
         self.timer = threading.Timer(self.timeout, self._on_timeout)
         self.timer.start()
 
     def _stop_timer(self):
-        """Stop the timer"""
         if self.timer is not None:
             self.timer.cancel()
             self.timer = None
 
     def _on_timeout(self):
-        """Handle timeout: retransmit all unacked packets"""
         with self.lock:
             print("[TIMEOUT] Retransmitting packets")
             for seq in range(self.base, self.next):
                 if seq in self.buffer:
-                    pkt = self.buffer[seq]
-                    self.transport.channel.send(pkt.serialize(), self.addr)
-            # restart timer
+                    self.transport.channel.send(
+                        self.buffer[seq].serialize(), self.addr
+                    )
             self._start_timer()
