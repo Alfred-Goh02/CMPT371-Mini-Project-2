@@ -18,9 +18,17 @@ if not client_addr:
 print("Receiver ready...")
 
 while True:
-    data, addr = sock.recvfrom(4096)
-    pkt = Packet.deserialize(data)
-    if pkt:
-        result = rx.handle_packet(pkt, addr)
-        if result:
-            print("Received:", len(result), "bytes")
+    try:
+        data, addr = sock.recvfrom(4096) 
+        
+        pkt = Packet.deserialize(data)
+        if pkt:
+            result = rx.handle_packet(pkt, addr)
+            if result:
+                print("Received:", len(result), "bytes")
+
+    except ConnectionResetError:
+        # Catches WinError 10054
+        continue
+    except Exception as e:
+        print(f"Receiver Error: {e}")
