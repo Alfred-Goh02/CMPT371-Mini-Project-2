@@ -2,7 +2,7 @@ import random
 
 
 class UnreliableChannel:
-    def __init__(self, sock, loss_rate=0.1, corrupt_rate=0.05):
+    def __init__(self, sock, loss_rate=0.1, corrupt_rate=0.00):
         self.sock = sock
         self.loss_rate = loss_rate
         self.corrupt_rate = corrupt_rate

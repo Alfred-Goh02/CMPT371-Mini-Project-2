@@ -6,7 +6,7 @@ from packet import Packet
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('127.0.0.1', 9001))
 
-rt = ReliableTransport(sock, loss_rate=0.0)
+rt = ReliableTransport(sock, loss_rate=0.1)
 rx = Receiver(rt)
 
 print("Receiver starting...")
