@@ -7,7 +7,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('127.0.0.1', 0))
 
 # Initialize transport with 20% loss to test congestion control
-rt = ReliableTransport(sock, loss_rate=0.1) # CHANGE THIS BACKKKKKKKKKK
+rt = ReliableTransport(sock, loss_rate=0.2) # CHANGE THIS BACKKKKKKKKKK
 sender = GBNSender(rt)
 
 addr = ('127.0.0.1', 9002)
